@@ -18,6 +18,7 @@ const User = new mongoose.Schema(
     quote: {
       type: String,
     },
+    contacts: [{ type: mongoose.Types.ObjectId, ref: "Contact" }],
   },
   { collection: "user-data" }
 );
