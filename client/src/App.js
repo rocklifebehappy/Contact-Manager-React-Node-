@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import NewContact from "./pages/NewContact";
+import UpdateContact from "./pages/UpdateContact";
 
 function App() {
   return (
@@ -21,6 +23,11 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login></Login>}></Route>
           <Route path="/register" element={<Register></Register>}></Route>
+          <Route path="/new" element={<NewContact></NewContact>}></Route>
+          <Route
+            path="/update/:id"
+            element={<UpdateContact></UpdateContact>}
+          ></Route>
           <Route path="/" element={<Dashboard></Dashboard>}></Route>
         </Routes>
       </Router>

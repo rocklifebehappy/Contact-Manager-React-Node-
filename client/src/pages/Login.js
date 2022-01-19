@@ -30,9 +30,10 @@ const Login = () => {
     const data = await respone.json();
     console.log("here1");
     if (data.user) {
+      localStorage.clear();
       console.log("here2");
       localStorage.setItem("token", data.user);
-      alert("Login Successfull");
+      alert("Login Successfull", data.user.uid);
       window.location.href = "/";
     } else {
       alert("Please Check your email and Password!");

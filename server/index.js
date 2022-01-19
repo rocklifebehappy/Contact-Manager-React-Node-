@@ -54,6 +54,7 @@ app.post("/api/login", async (req, res) => {
       {
         name: user.name,
         email: user.email,
+        uid: user.id,
       },
       "secret123"
     );
@@ -64,7 +65,40 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("api/contacts", async (req, res) => {});
+app.post("/api/create/:uid", async (req, res) => {
+  try {
+    const contact = new Contact({
+      name: req.body.name,
+      phone: req.body.phone,
+      address: req.body.address,
+      email: req.body.email,
+      photograph: req.body.photograph,
+      user: req.params.uid,
+    });
+    contact.save();
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.get("/api/contacts/:uid", async (req, res) => {
+  console.log(req.params.uid);
+  Contact.find({ user: req.params.uid }, (err, result) => {
+    if (err) {
+      res.send(err);
+    } else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+});
+
+app.get("/api/contact/:id", async (req, res) => {
+  const contact = await Contact.findOne({
+    id: req.param.id,
+  });
+  console.log(contact);
+});
 
 app.listen(3001, () => {
   console.log("App is running on port 3001!");
