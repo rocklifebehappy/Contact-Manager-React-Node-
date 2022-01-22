@@ -87,7 +87,7 @@ app.get("/api/contacts/:uid", async (req, res) => {
     if (err) {
       res.send(err);
     } else {
-      console.log(result);
+      // console.log(result);
       res.send(result);
     }
   });
@@ -95,9 +95,35 @@ app.get("/api/contacts/:uid", async (req, res) => {
 
 app.get("/api/contact/:id", async (req, res) => {
   const contact = await Contact.findOne({
-    id: req.param.id,
+    _id: req.params.id,
   });
-  console.log(contact);
+  res.send(contact);
+});
+
+app.post("/api/update/:id", async (req, res) => {
+  Contact.findByIdAndUpdate(
+    { _id: req.params.id },
+    {
+      name: req.body.name,
+      email: req.body.email,
+      address: req.body.address,
+      phone: req.body.phone,
+    },
+    function (err, docs) {
+      if (err) res.json(err);
+      else {
+        console.log(req.params.id);
+        res.send({ status: "ok" });
+      }
+    }
+  );
+});
+
+app.delete("/api/delete/:id", async (req, res) => {
+  console.log("delete comes");
+  const id = req.params.id;
+  await Contact.findByIdAndRemove(id).exec();
+  res.send("deleted");
 });
 
 app.listen(3001, () => {

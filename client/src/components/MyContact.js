@@ -1,5 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 const MyContact = (props) => {
+
   return (
     <div className="row justify-content-around border p-2 m-1">
       <div className="col-sm-8">
@@ -23,17 +25,21 @@ const MyContact = (props) => {
         </div>
       </div>
       <div className="col-sm-2">
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            window.location.href = `/update/${props.contact._id}`;
+        <Link
+          to={{
+            pathname: `/update/${props.contact._id}`,
           }}
         >
-          update
-        </button>
+          <button className="btn btn-primary">update</button>
+        </Link>
       </div>
       <div className="col-sm-2">
-        <button className="btn btn-danger">delete</button>
+        <button
+          className="btn btn-danger"
+          onClick={() => props.deleteFriend(props.contact._id)}
+        >
+          delete
+        </button>
       </div>
     </div>
   );

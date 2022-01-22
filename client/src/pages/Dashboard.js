@@ -9,14 +9,28 @@ function Dashboard() {
   const getContacts = (uid) => {
     Axios.get(`http://localhost:3001/api/contacts/${uid}`)
       .then((response) => {
-        console.log(response.data);
         setContactList(response.data);
-        console.log("barrier");
       })
       .catch(() => {
         console.log("error");
       });
   };
+
+  const deleteFriend = (id) => {
+    console.log("delete from function");
+    Axios.delete(`http://localhost:3001/api/delete/${id}`, { id: id })
+      .then(() => {
+        setContactList(
+          contactList.filter((val) => {
+            return val._id != id;
+          })
+        );
+      })
+      .catch(() => {
+        console.log("error");
+      });
+  };
+
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -31,7 +45,7 @@ function Dashboard() {
         navigate.replace("/login");
       } else {
         console.log("Login with jwt is okay");
-        console.log(user.uid);
+
         getContacts(user.uid);
       }
     } else {
@@ -39,39 +53,83 @@ function Dashboard() {
       window.location.href = "/login";
     }
   }, []);
-  return (
-    <React.Fragment>
-      <div className="row justify-content-around mb-2 p-1">
-        <div className="col-sm-6 text-center">
-          <h6>Your Contact Manager!</h6>
+  if (contactList.length === 0) {
+    return (
+      <React.Fragment>
+        <div className="row justify-content-around mb-2 p-1">
+          <div className="col-sm-6 text-center">
+            <h6>Your Contact Manager!</h6>
+          </div>
+          <div className="col-sm-2 text-center">
+            <button
+              className="btn btn-outline-success"
+              onClick={() => {
+                window.location.href = "/new";
+              }}
+            >
+              Add Contact
+            </button>
+          </div>
+          <div className="col-sm-2 text-center">
+            <button
+              className="btn btn-outline-danger"
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = "/login";
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
-        <div className="col-sm-2 text-center">
-          <button
-            className="btn btn-outline-success"
-            onClick={() => {
-              window.location.href = "/new";
-            }}
-          >
-            Add Contact
-          </button>
+        <div className="row justify-content-around m-3">
+          <div className="col-sm-6 text-center">
+            <h5>No Contacts to show</h5>
+          </div>
         </div>
-        <div className="col-sm-2 text-center">
-          <button
-            className="btn btn-outline-danger"
-            onClick={() => {
-              localStorage.clear();
-              window.location.href = "/login";
-            }}
-          >
-            Sign Out
-          </button>
+      </React.Fragment>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        <div className="row justify-content-around mb-2 p-1">
+          <div className="col-sm-6 text-center">
+            <h6>Your Contact Manager!</h6>
+          </div>
+          <div className="col-sm-2 text-center">
+            <button
+              className="btn btn-outline-success"
+              onClick={() => {
+                window.location.href = "/new";
+              }}
+            >
+              Add Contact
+            </button>
+          </div>
+          <div className="col-sm-2 text-center">
+            <button
+              className="btn btn-outline-danger"
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = "/login";
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
-      </div>
-      {contactList.map((item) => {
-        return <MyContact key={item._id} contact={item}></MyContact>;
-      })}
-    </React.Fragment>
-  );
+        {contactList.map((item) => {
+          return (
+            <MyContact
+              key={item._id}
+              contact={item}
+              deleteFriend={deleteFriend}
+            ></MyContact>
+          );
+        })}
+      </React.Fragment>
+    );
+  }
 }
 
 export default Dashboard;
