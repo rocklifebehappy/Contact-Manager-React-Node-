@@ -10,6 +10,7 @@ const UpdateContact = () => {
   const [phone, setPhone] = useState(0);
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
+  const [image, setImage] = useState("");
 
   const handlename = (event) => {
     setName(event.target.value);
@@ -23,6 +24,16 @@ const UpdateContact = () => {
   const handleAddress = (event) => {
     setAddress(event.target.value);
   };
+  const handleImage = (event) => {
+    setImage(event.target.files[0]);
+  };
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("phone", phone);
+  formData.append("address", address);
+  formData.append("email", email);
+  formData.append("image", image);
 
   const updateContact = (event) => {
     event.preventDefault();
@@ -31,6 +42,7 @@ const UpdateContact = () => {
       phone: phone,
       address: address,
       email: email,
+      image: image,
     })
       .then((response) => {
         console.log("update good");
@@ -54,6 +66,7 @@ const UpdateContact = () => {
         setPhone(contact.phone);
         setEmail(contact.email);
         setAddress(contact.Address);
+        setImage(contact.photograph);
       })
       .catch(() => {
         console.log("error");
@@ -64,7 +77,11 @@ const UpdateContact = () => {
     <React.Fragment>
       <div className="row justify-content-around">
         <div className="col-sm-6">
-          <form className="form" onSubmit={updateContact}>
+          <form
+            className="form"
+            onSubmit={updateContact}
+            encType="multipart/from-data"
+          >
             <div className="form-group">
               <label className="lead" htmlFor="name">
                 Name:
@@ -126,7 +143,14 @@ const UpdateContact = () => {
             </div>
             <div className="form-group">
               <label className="lead from-label">Select an image</label>
-              <input type="file" placeholder="Image"></input>
+              <input
+                type="file"
+                placeholder="Image"
+                accept="image/*"
+                defaultValue={contact.photograph}
+                onChange={handleImage}
+                onLoad={handleImage}
+              ></input>
             </div>
             <div className="form-group">
               <button type="submit" className="btn btn-success">

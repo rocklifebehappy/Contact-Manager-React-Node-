@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const Contact = require("./models/Contact");
+const multer = require("multer");
+const fs = require("fs");
 
 app.use(cors());
 app.use(express.json());
@@ -14,6 +16,17 @@ app.use(express.json());
 mongoose.connect("mongodb://localhost:27017/Contact-Manager", {
   useNewUrlParser: true,
 });
+
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, "../client/public/uploads");
+  },
+  filename: (req, file, callback) => {
+    callback(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 //Tasks for api's
 app.post("/api/register", async (req, res) => {
@@ -65,17 +78,20 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.post("/api/create/:uid", async (req, res) => {
+app.post("/api/create/:uid", upload.single("image"), async (req, res) => {
+  console.log("for image");
   try {
     const contact = new Contact({
       name: req.body.name,
       phone: req.body.phone,
       address: req.body.address,
       email: req.body.email,
-      photograph: req.body.photograph,
+      photograph: req.file.originalname,
       user: req.params.uid,
     });
     contact.save();
+    console.log(contact);
+    res.send({ status: "ok", contact: contact });
   } catch (error) {
     res.send(error);
   }
@@ -100,7 +116,7 @@ app.get("/api/contact/:id", async (req, res) => {
   res.send(contact);
 });
 
-app.post("/api/update/:id", async (req, res) => {
+app.post("/api/update/:id", upload.single("image"), async (req, res) => {
   Contact.findByIdAndUpdate(
     { _id: req.params.id },
     {
@@ -108,6 +124,7 @@ app.post("/api/update/:id", async (req, res) => {
       email: req.body.email,
       address: req.body.address,
       phone: req.body.phone,
+      // photograph: req.file.filename,
     },
     function (err, docs) {
       if (err) res.json(err);

@@ -1,6 +1,7 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const NewContact = () => {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ const NewContact = () => {
   const [phone, setPhone] = useState(0);
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
-  const [image, setImage] = useState([]);
+  const [image, setImage] = useState("");
   const [uid, setuid] = useState("");
 
   const handleName = (event) => {
@@ -28,32 +29,33 @@ const NewContact = () => {
   };
 
   const handleImage = (event) => {
-    setImage(event.target.value);
+    setImage(event.target.files[0]);
   };
 
   const handleUid = (uid) => {
     setuid(uid);
   };
 
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("phone", phone);
+  formData.append("address", address);
+  formData.append("email", email);
+  formData.append("image", image);
+
   async function createContact(event) {
     console.log("here comes");
     event.preventDefault();
-    const response = await fetch(`http://localhost:3001/api/create/${uid}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        phone: phone,
-        address: address,
-        email: email,
-        photograph: image,
-      }),
-    });
-    const data = response.json();
-    console.log(data);
-    window.location.reload(true);
+    axios
+      .post(`http://localhost:3001/api/create/${uid}`, formData)
+      .then((respone) => {
+        console.log("ok done");
+      })
+      .catch((respone) => {
+        console.log(respone);
+      });
+
+    // window.location.reload(true);
   }
 
   useEffect(() => {
@@ -81,7 +83,11 @@ const NewContact = () => {
       </div>
       <div className="row justify-content-around">
         <div className="col-sm-6">
-          <form className="form " onSubmit={createContact}>
+          <form
+            className="form "
+            onSubmit={createContact}
+            encType="multipart/from-data"
+          >
             <div className="form-group">
               <label className="lead" htmlFor="name">
                 Name:
@@ -139,7 +145,10 @@ const NewContact = () => {
               <input
                 type="file"
                 placeholder="Image"
+                accept="image/*"
+                name="image"
                 onChange={handleImage}
+                className="from-control-file"
               ></input>
             </div>
             <div className="form-group">
