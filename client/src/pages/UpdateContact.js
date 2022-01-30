@@ -37,13 +37,7 @@ const UpdateContact = () => {
 
   const updateContact = (event) => {
     event.preventDefault();
-    Axios.post(`http://localhost:3001/api/update/${id}`, {
-      name: name,
-      phone: phone,
-      address: address,
-      email: email,
-      image: image,
-    })
+    Axios.post(`http://localhost:3001/api/update/${id}`, formData)
       .then((response) => {
         console.log("update good");
         console.log(response.data);

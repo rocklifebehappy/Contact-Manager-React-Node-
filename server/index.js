@@ -117,6 +117,7 @@ app.get("/api/contact/:id", async (req, res) => {
 });
 
 app.post("/api/update/:id", upload.single("image"), async (req, res) => {
+  console.log(req.file.filename);
   Contact.findByIdAndUpdate(
     { _id: req.params.id },
     {
@@ -124,7 +125,7 @@ app.post("/api/update/:id", upload.single("image"), async (req, res) => {
       email: req.body.email,
       address: req.body.address,
       phone: req.body.phone,
-      // photograph: req.file.filename,
+      photograph: req.file.originalname,
     },
     function (err, docs) {
       if (err) res.json(err);
